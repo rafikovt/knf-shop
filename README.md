@@ -6,6 +6,8 @@
 
 ### 1) Сервер (REST + WS)
 ```bash
+
+
 cd server
 npm i
 npm start
