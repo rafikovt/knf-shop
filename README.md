@@ -4,6 +4,15 @@
 
 ## Быстрый старт
 
+### 1) Сервер (REST + WS)
+```bash
+cd server
+npm i
+npm start
+# REST: http://localhost:3000
+# WS  : ws://localhost:3001
+```
+
 ### 2) Клиент (Vite + Vue 3)
 ```bash
 cd web
