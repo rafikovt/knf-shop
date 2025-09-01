@@ -5,6 +5,7 @@ import { useQuerySync } from '@/composables/useQuerySync'
 import ProductCard from '@/components/ProductCard.vue'
 import FiltersBar from '@/components/FiltersBar.vue'
 import Pagination from '@/components/Pagination.vue'
+import { useDebounceFn } from '@vueuse/core'
 
 const catalog = useCatalog()
 
@@ -19,22 +20,35 @@ const q = useQuerySync({
   limit: 20
 })
 
-const load = () => catalog.fetchList(q.value)
+const load = useDebounceFn(() => catalog.fetchList(q.value), 300)
 
 onMounted(load)
 watch(q, load, { deep: true })
+watch(
+    () => [q.value.q, q.value.min, q.value.max, q.value.inStock, q.value.rarity, q.value.sort],
+    () => { q.value.page = 1 }
+)
 </script>
 
 <template>
   <div class="max-w-6xl mx-auto px-4 py-6">
     <FiltersBar
-      :q="q.q" :min="q.min" :max="q.max" :inStock="q.inStock" :rarity="q.rarity" :sort="q.sort"
-      @update:q="q.q = $event" @update:min="q.min = $event" @update:max="q.max = $event"
-      @update:inStock="q.inStock = $event" @update:rarity="q.rarity = $event" @update:sort="q.sort = $event"
+      :q="q.q"
+      :min="q.min"
+      :max="q.max"
+      :inStock="q.inStock"
+      :rarity="q.rarity"
+      :sort="q.sort"
+      @update:q="q.q = $event"
+      @update:min="q.min = $event"
+      @update:max="q.max = $event"
+      @update:inStock="q.inStock = $event"
+      @update:rarity="q.rarity = $event"
+      @update:sort="q.sort = $event"
     />
 
     <div v-if="catalog.loading" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div v-for="i in 8" :key="i" class="h-64 bg-white rounded-xl shadow animate-pulse"></div>
+      <div v-for="i in 8" :key="i" class="h-64 rounded-xl shadow animate-pulse bg-slate-200 dark:bg-slate-400"></div>
     </div>
 
     <div v-else-if="catalog.error" class="p-4 bg-rose-50 border border-rose-200 rounded-xl">

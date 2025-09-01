@@ -14,7 +14,7 @@ export const useSocket = () => {
     socket.value?.close()
     const s = io(import.meta.env.VITE_WS_URL, {
       transports: ['websocket'],
-      query: { userId: auth.user?.id || 'guest' }, // 👈 комната пользователя
+      query: { userId: auth.user?.id || 'guest' },
       reconnection: true,
       reconnectionAttempts: Infinity,
       reconnectionDelay: 1000
@@ -33,7 +33,7 @@ export const useSocket = () => {
   }
 
   onMounted(connect)
-  watch(() => auth.user?.id, connect) // если пользователь сменился — переподключаемся
+  watch(() => auth.user?.id, connect)
 
   onBeforeUnmount(() => { socket.value?.close() })
 

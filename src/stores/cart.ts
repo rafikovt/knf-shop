@@ -1,4 +1,3 @@
-// web/src/stores/cart.ts
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { api } from '@/api/http'
@@ -6,7 +5,7 @@ import type { Cart } from '@/api/types'
 
 type UXItemFlags = {
   productId: string
-  status?: 'out' | 'price'   // out = нет в наличии, price = изменилась цена
+  status?: 'out' | 'price'
   highlight?: boolean
   newPrice?: number
 }
@@ -16,7 +15,7 @@ export const useCart = defineStore('cart', () => {
   const loading = ref(false)
   const error = ref('')
   const notice = ref('')
-  const pending = ref(false)             // блокируем кнопки на время запроса
+  const pending = ref(false)
   const uxFlags = ref<Record<string, UXItemFlags>>({})
 
   const items = computed(() => cart.value?.items ?? [])
@@ -27,10 +26,8 @@ export const useCart = defineStore('cart', () => {
     cart.value = await api.get('/cart')
   }
 
-  // helper: безопасный клон простых данных
   const clone = <T,>(v: T) => (v ? JSON.parse(JSON.stringify(v)) as T : v)
 
-  // оптимистичное добавление
   const add = async (productId: string, qty = 1, meta?: { name: string; price: number; image: string; inStock: boolean }) => {
     pending.value = true
     const snapshot = clone(cart.value)
@@ -57,7 +54,6 @@ export const useCart = defineStore('cart', () => {
     }
   }
 
-  // оптимистичное изменение количества
   const update = async (productId: string, qty: number) => {
     pending.value = true
     const snapshot = clone(cart.value)
@@ -66,12 +62,10 @@ export const useCart = defineStore('cart', () => {
 
     try {
       cart.value = await api.post('/cart/update', { productId, qty })
-      // при успехе сбросим флаги подтверждения для этого товара
       delete uxFlags.value[productId]
     } catch (e: any) {
       const err = e?.response?.data
       if (err?.error === 'PRICE_CHANGED') {
-        // показываем подтверждение новой цены
         uxFlags.value[productId] = {
           productId,
           needsConfirm: true,
@@ -91,7 +85,6 @@ export const useCart = defineStore('cart', () => {
     }
   }
 
-  // оптимистичное удаление
   const remove = async (productId: string) => {
     pending.value = true
     const snapshot = clone(cart.value)
@@ -106,20 +99,16 @@ export const useCart = defineStore('cart', () => {
     }
   }
 
-  // подтверждаем новую цену после PRICE_CHANGED
   const confirmReprice = async (productId: string) => {
     const f = uxFlags.value[productId]
     if (!f?.newPrice) { delete uxFlags.value[productId]; return }
-    // поднимаем qty из текущей позиции (оставляем как есть)
     const it = items.value.find(i => i.productId === productId)
     if (!it) { delete uxFlags.value[productId]; return }
-    // пробуем ещё раз апдейт с тем же qty (сервер отдаст уже новую цену)
     await update(productId, it.qty)
     delete uxFlags.value[productId]
     notice.value = 'Цена обновлена.'
   }
 
-  // пришло по WebSocket: обновить инсток/цену
   const reflectProductUpdate = ({ id, changes }: { id: string; changes: Partial<{ price: number; inStock: boolean }> }) => {
     const it = items.value.find(i => i.productId === id)
     if (!it) return
@@ -145,7 +134,6 @@ export const useCart = defineStore('cart', () => {
   const applyServerCart = (next: Cart) => {
     cart.value = next
     notice.value = 'Корзина обновлена'
-    // сбросим все флаги
     uxFlags.value = {}
   }
 

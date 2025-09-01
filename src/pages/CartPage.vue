@@ -74,6 +74,5 @@ const newPrice = (pid: string) => cart.uxFlags[pid]?.newPrice
 </template>
 
 <style scoped>
-/* лёгкая подсветка при изменениях */
 .ring-amber-300 { transition: box-shadow .2s ease; }
 </style>

@@ -20,7 +20,6 @@ export const router = createRouter({
   ]
 })
 
-// simple auth guard
 router.beforeEach((to) => {
   const auth = useAuth()
   const isLogin = to.path === '/login'
