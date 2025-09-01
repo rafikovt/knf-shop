@@ -3,12 +3,18 @@
 import { onMounted, computed } from 'vue'
 import { useCart } from '@/stores/cart'
 import QtyInput from '@/components/QtyInput.vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const cart = useCart()
 onMounted(() => cart.load())
 
 const needsConfirm = (pid: string) => cart.uxFlags[pid]?.status === 'price'
 const newPrice = (pid: string) => cart.uxFlags[pid]?.newPrice
+const goCheckout = () => {
+  router.push('/checkout')
+}
+
 </script>
 
 <template>
@@ -50,7 +56,6 @@ const newPrice = (pid: string) => cart.uxFlags[pid]?.newPrice
           </button>
         </div>
 
-        <!-- полоса подтверждения при изменении цены -->
         <div v-if="needsConfirm(it.productId)" class="rounded-lg bg-amber-50 border border-amber-200 p-3 flex items-center gap-3">
           <div class="text-sm">
             Цена изменилась до <b>${{ newPrice(it.productId)?.toFixed?.(2) ?? newPrice(it.productId) }}</b>.
@@ -69,6 +74,13 @@ const newPrice = (pid: string) => cart.uxFlags[pid]?.newPrice
       <div class="text-right text-lg">
         Итого: <span class="font-bold">${{ cart.subtotal.toFixed(2) }}</span> {{ cart.currency }}
       </div>
+      <button
+          class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 disabled:opacity-50"
+          :disabled="!cart.items.length"
+          @click="goCheckout"
+      >
+        Оформить заказ
+      </button>
     </div>
   </div>
 </template>

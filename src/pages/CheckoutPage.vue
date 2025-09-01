@@ -38,16 +38,17 @@ const submit = async () => {
 
 <template>
   <div class="max-w-xl mx-auto px-4 py-6">
-    <h1 class="text-xl font-bold mb-4">Оформление заказа</h1>
+    <template v-if="!result">
+      <h1 class="text-xl font-bold mb-4">Оформление заказа</h1>
 
-    <div class="bg-white rounded-xl shadow p-4 space-y-3">
-      <input class="w-full border rounded px-3 py-2" v-model="name" placeholder="Имя" aria-label="Имя" />
-      <textarea class="w-full border rounded px-3 py-2" v-model="comment" placeholder="Комментарий" aria-label="Комментарий"></textarea>
-      <button class="w-full bg-indigo-600 text-white rounded px-3 py-2 disabled:opacity-50" :disabled="loading" @click="submit">
-        {{ loading ? 'Отправка...' : 'Подтвердить заказ' }}
-      </button>
-    </div>
-
+      <div class="bg-white rounded-xl shadow p-4 space-y-3">
+        <input class="w-full border rounded px-3 py-2" v-model="name" placeholder="Имя" aria-label="Имя" />
+        <textarea class="w-full border rounded px-3 py-2" v-model="comment" placeholder="Комментарий" aria-label="Комментарий"></textarea>
+        <button class="w-full bg-indigo-600 text-white rounded px-3 py-2 disabled:opacity-50" :disabled="loading" @click="submit">
+          {{ loading ? 'Отправка...' : 'Подтвердить заказ' }}
+        </button>
+      </div>
+    </template>
     <div v-if="result" class="mt-4 p-3 rounded bg-emerald-50 border border-emerald-200">{{ result }}</div>
     <div v-if="error" class="mt-4 p-3 rounded bg-rose-50 border border-rose-200">{{ error }}</div>
   </div>
