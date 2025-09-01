@@ -2,25 +2,16 @@
 
 Небольшой SPA-магазин на моках с онлайн‑обновлениями через WebSocket.
 
-## Быстрый старт
+Приложение обубликовано на https://rafikovt.github.io/knf-shop/
 
-### 1) Сервер (REST + WS)
-```bash
+## Быстрый старт в дев режиме
 
-
-cd server
-npm i
-npm start
-# REST: http://localhost:3000
-# WS  : ws://localhost:3001
-```
 
 ### 2) Клиент (Vite + Vue 3)
 ```bash
-cd web
 npm i
 npm run dev
-# Открой http://localhost:5173
+
 ```
 
 ## Фичи
@@ -34,14 +25,13 @@ npm run dev
 - Можно зайти под одним юзером, в разных вкладках, корзины у них будут синхронизироваться по сокету.
 
 ## Архитектура
-- `server/` — Express + Socket.IO, in-memory данные (80 товаров).
-- `web/` — Vue 3 + Pinia + Vue Router. Tailwind через CDN.
+- `server` — Express + Socket.IO, in-memory данные (80 товаров). https://github.com/rafikovt/knf-show-server
+- `web` — Vue 3 + Pinia + Vue Router. Tailwind через CDN. https://github.com/rafikovt/knf-shop
 - WebSocket подключается один раз (в `App.vue` через `useSocket`). События:
   - `product.updated` — патчит товар в каталоге и позицию в корзине.
   - `cart.synced` — подменяет корзину и показывает уведомление.
 
 ## Замечания
 - Изображения — (плейсхолдеры).
-- Можно допилить: skeleton для страницы товара, E2E тесты. Не доработано изменить товар при получении по сокету об его осутствии
--допилить валидаторы на поля, не долго, просто не успелось пока
+- Можно допилить:  E2E тесты.
 
